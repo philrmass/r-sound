@@ -4,3 +4,9 @@
   flex-direction: column;
   align-items: center;
 }
+.display {
+  background: #ff000020;
+  height: 150px;
+  width: 90vw;
+  display: block;
+}

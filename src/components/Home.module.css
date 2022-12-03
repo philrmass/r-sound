@@ -7,6 +7,6 @@
 .display {
   background: #ff000020;
   height: 150px;
-  width: 90vw;
+  width: calc(100vw - 32px);
   display: block;
 }

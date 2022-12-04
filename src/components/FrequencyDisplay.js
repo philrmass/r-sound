@@ -1,8 +1,22 @@
 import Canvas from './Canvas';
 import styles from './FrequencyDisplay.module.css';
 
-function drawLine(x, lineHeight, height, ctx) {
-  ctx.fillRect(x, height - lineHeight, 2, lineHeight);
+const bgColor = '#383838';
+const padding = 32;
+const valueMax = 256;
+
+function drawRect(x, y, width, height, p, ctx) {
+  const xf = x + padding;
+  const yf = p.fullHeight - padding - height;
+
+  ctx.fillRect(xf, yf, width, height);
+}
+
+function drawLine(index, value, p, ctx) {
+  const x = index * p.lineWidth;
+  const lineHeight = (value / valueMax) * p.height;
+
+  drawRect(x, 0, p.lineWidth, lineHeight, p, ctx);
 }
 
 export default function FrequencyDisplay({ analyser }) {
@@ -12,21 +26,33 @@ export default function FrequencyDisplay({ analyser }) {
       const buffer = new Uint8Array(length);
       analyser.getByteFrequencyData(buffer);
 
-      const width = ctx.canvas.width;
-      const height = ctx.canvas.height;
-      ctx.fillStyle = '#444';
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = '#bdd';
+      const fullHeight = ctx.canvas.height;
+      const fullWidth = ctx.canvas.width;
+      const width = fullWidth - 2 * padding;
+      const height = fullHeight - 2 * padding;
 
-      buffer.slice(0, 300).map((value, index) => {
-        const ratio = value / 256;
-        const lineHeight = ratio * height;
-        drawLine(index * 2, lineHeight, height, ctx);
+      const params = {
+        fullHeight,
+        fullWidth,
+        height,
+        lineWidth: Math.round(width / buffer.length, 5),
+        width,
+      };
+
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, fullWidth, fullHeight);
+
+      ctx.fillStyle = '#6422';
+      drawRect(0, 0, params.width, params.height, params, ctx);
+
+      ctx.fillStyle = '#bdd';
+      buffer.map((value, index) => {
+        drawLine(index, value, params, ctx);
       });
     }
   };
 
   return (
-    <Canvas className={styles.display} draw={draw} />
+    <Canvas className={styles.canvas} draw={draw} />
   );
 }

@@ -1,4 +1,5 @@
-.display {
-  background: #444;
-  width: calc(100vw - 32px);
+.canvas {
+  display: block;
+  width: 100%;
+  height: 40vw;
 }
